@@ -220,7 +220,7 @@ def convert_examples_to_features(examples, label_list, max_seq_length, tokenizer
 
 		if tokens_c:
 			_truncate_seq_tuple(tokens_a, tokens_b, tokens_c, max_seq_length - 4)
-			tokens_b = tokens_c + sep_token + tokens_b
+			tokens_b = tokens_c + [sep_token] + tokens_b
 		elif tokens_b:
 			_truncate_seq_pair(tokens_a, tokens_b, max_seq_length - 3)
 		else:
@@ -504,6 +504,8 @@ def main():
 		optimizer = AdamW(optimizer_grouped_parameters,
 							lr=args.learning_rate,
 							eps=1e-6)
+		warmup_steps = int(args.warmup_proportion * t_total)
+		scheduler = WarmupLinearSchedule(optimizer, warmup_steps=warmup_steps, t_total=t_total)
 
 
 	global_step = 0
@@ -561,6 +563,7 @@ def main():
 				nb_tr_steps += 1
 				
 				if (step + 1) % args.gradient_accumulation_steps == 0:
+					scheduler.step()
 					optimizer.step()    # We have accumulated enought gradients
 					model.zero_grad()
 					global_step += 1
