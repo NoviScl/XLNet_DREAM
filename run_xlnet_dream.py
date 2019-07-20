@@ -568,7 +568,7 @@ def main():
 					model.zero_grad()
 					global_step += 1
 
-				if step%400 == 0:
+				if step%800 == 0:
 					logger.info("Training loss: {}, global step: {}".format(tr_loss/nb_tr_steps, global_step))
 
 
@@ -648,7 +648,7 @@ def main():
 
 
 				output_eval_file = os.path.join(args.output_dir, "eval_results_test.txt")
-				with open(output_eval_file, "w") as writer:
+				with open(output_eval_file, "a+") as writer:
 					logger.info(" Epoch: %d", (ep+1))
 					logger.info("***** Eval results *****")
 					writer.write(" Epoch: "+str(ep+1))
