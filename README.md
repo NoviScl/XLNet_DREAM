@@ -4,8 +4,8 @@ Author: Chenglei Si (River Valley High School, Singapore)
 Usage:
 
 1. Download data and unzip to this folder.
-2. (If you have not installed sentencepiece) Run 'pip install sentencepiece'
-3. Run 'sh run.sh'
+2. (If you have not installed sentencepiece) Run `pip install sentencepiece`
+3. Run `sh run.sh`
 
 (The hyperparameters that I used can be found in run.sh)
 
