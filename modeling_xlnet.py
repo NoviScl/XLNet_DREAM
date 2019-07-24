@@ -1143,6 +1143,7 @@ class XLNetForSequenceClassification(XLNetPreTrainedModel):
                                                head_mask=head_mask)
         output = transformer_outputs[0]
 
+        # XLNet takes the last time step output as summary vector of whole sequence 
         output = self.sequence_summary(output)
         # (bsz*3, 1)
         logits = self.logits_proj(output)
