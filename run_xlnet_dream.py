@@ -137,11 +137,14 @@ class dreamProcessor(DataProcessor):
 					random.shuffle(data)
 				for i in range(len(data)):
 					for j in range(len(data[i][1])):
-						# still doing simple concat, possible for novelty here!
-						d = ['\n'.join(data[i][0]).lower(), data[i][1][j]["question"].lower()]
+						# shouldn't do lower case, since we are using cased model 						
+						# d = ['\n'.join(data[i][0]).lower(), data[i][1][j]["question"].lower()]
+						d = ['\n'.join(data[i][0]), data[i][1][j]["question"]]
 						for k in range(len(data[i][1][j]["choice"])):
-							d += [data[i][1][j]["choice"][k].lower()]
-						d += [data[i][1][j]["answer"].lower()] 
+							# d += [data[i][1][j]["choice"][k].lower()]
+							d += [data[i][1][j]["choice"][k]]
+						# d += [data[i][1][j]["answer"].lower()] 
+						d += [data[i][1][j]["answer"]] 
 						self.D[sid] += [d]
 		
 	def get_train_examples(self, data_dir):
@@ -384,11 +387,15 @@ def main():
 						default=3.0,
 						type=float,
 						help="Total number of training epochs to perform.")
-	parser.add_argument("--warmup_proportion",
-						default=0.1,
-						type=float,
+	parser.add_argument("--warmup_steps",
+						default=100,
+						type=int,
 						help="Proportion of training to perform linear learning rate warmup for. "
 							 "E.g., 0.1 = 10%% of training.")
+	parser.add_argument("--weight_decay", default=0.0, type=float,
+                        help="Weight deay if we apply some.")
+	parser.add_argument("--adam_epsilon", default=1e-8, type=float,
+                        help="Epsilon for Adam optimizer.")
 	parser.add_argument("--no_cuda",
 						default=False,
 						action='store_true',
@@ -453,7 +460,6 @@ def main():
 	num_train_steps = None
 	if args.do_train:
 		train_examples = processor.get_train_examples(args.data_dir)
-		random.shuffle(train_examples)
 		num_train_steps = int(
 			len(train_examples) / n_class / args.train_batch_size / args.gradient_accumulation_steps * args.num_train_epochs)
 
@@ -479,7 +485,7 @@ def main():
 	no_decay = ['bias', 'LayerNorm.weight']
 	## note: no weight decay according to XLNet paper 
 	optimizer_grouped_parameters = [
-		{'params': [p for n, p in model.named_parameters() if not any(nd in n for nd in no_decay)], 'weight_decay': 0.0},
+		{'params': [p for n, p in model.named_parameters() if not any(nd in n for nd in no_decay)], 'weight_decay': args.weight_decay},
 		{'params': [p for n, p in model.named_parameters() if any(nd in n for nd in no_decay)], 'weight_decay': 0.0}
 		]
 	t_total = num_train_steps
@@ -504,8 +510,8 @@ def main():
 		# Adam Epsilon fixed at 1e-6 according to XLNet paper 
 		optimizer = AdamW(optimizer_grouped_parameters,
 							lr=args.learning_rate,
-							eps=1e-6)
-		warmup_steps = int(args.warmup_proportion * t_total)
+							eps=args.adam_epsilon)
+		warmup_steps = args.warmup_steps
 		scheduler = WarmupLinearSchedule(optimizer, warmup_steps=warmup_steps, t_total=t_total)
 
 
