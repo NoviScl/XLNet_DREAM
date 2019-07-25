@@ -2,7 +2,7 @@
 Author: Chenglei Si (River Valley High School, Singapore)
 
 Update:
-Sometimes you may get degenerate runs where the performance is far lower than the expected performance. This is mainly because the training is not stable on smaller datasets. You may try to change the random seeds (and perhaps learning rate, batch size and warmup rate) and restart training. Similar issues were reported on [BERT](https://github.com/huggingface/pytorch-transformers/issues/391) as well. I don't think there is very good fix for that yet. But if you want, I can send you a trained checkpoint. Feel free to contact me through email: sichenglei1125@gmail.com  
+Sometimes you may get degenerate runs where the performance is far lower than the expected performance. This is mainly because the training is not stable on smaller datasets. You may try to change the random seeds (and perhaps learning rate, batch size, warmup steps or other hyperparameters as well) and restart training. If you want, I can send you a trained checkpoint. Feel free to contact me through email: sichenglei1125@gmail.com  
 
 Usage:
 
