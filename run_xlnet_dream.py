@@ -580,11 +580,11 @@ def main():
 
 
 			if args.do_eval:
-				eval_examples = processor.get_test_examples(args.data_dir)
+				eval_examples = processor.get_dev_examples(args.data_dir)
 				eval_features = convert_examples_to_features(
 					eval_examples, label_list, args.max_seq_length, tokenizer)
 
-				logger.info("***** Running evaluation *****")
+				logger.info("***** Running Dev Evaluation *****")
 				logger.info("  Num examples = %d", len(eval_examples))
 				logger.info("  Batch size = %d", args.eval_batch_size)
 
